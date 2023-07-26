@@ -1,23 +1,46 @@
 import "./App.css";
 import Movies from "./components/Movies";
-import withResults from "./mocks/with-results.json";
+import { useSearch } from "./hooks/useSearch";
+import { useMovies } from "./hooks/useMovies";
+import { useState } from "react";
 
 function App() {
-  const movies = withResults.Search;
+  const [sort, setSort] = useState(false);
+  const { search, updateSearch, error } = useSearch();
+  const { movies, getMovies, loading } = useMovies({ search, sort });
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    getMovies({ search });
+  };
+
+  const handleSort = () => {
+    setSort(!sort);
+  };
+
+  const handleChange = (event) => {
+    const newSearch = event.target.value;
+    updateSearch(newSearch);
+  };
 
   return (
     <div className="page">
       <header>
         <h1>Buscador de películas</h1>
-        <form>
-          <input type="text" placeholder="Avengers, matrix..." />
-          <button type="submit">Buscar</button>
+        <form className="form" onSubmit={handleSubmit}>
+          <input
+            name="query"
+            onChange={handleChange}
+            value={search}
+            placeholder="Avengers, matrix..."
+          />
+          <input type="checkbox" onChange={handleSort} checked={sort} />
+          <button>Buscar</button>
         </form>
+        {error && <p style={{ color: "red" }}>{error}</p>}
       </header>
 
-      <main>
-        <Movies movies={movies} />
-      </main>
+      <main>{loading ? <p>Loading...</p> : <Movies movies={movies} />}</main>
     </div>
   );
 }
