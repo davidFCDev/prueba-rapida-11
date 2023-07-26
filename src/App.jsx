@@ -1,7 +1,10 @@
 import "./App.css";
+import Movies from "./components/Movies";
 import withResults from "./mocks/with-results.json";
 
 function App() {
+  const movies = withResults.Search;
+
   return (
     <div className="page">
       <header>
@@ -12,7 +15,9 @@ function App() {
         </form>
       </header>
 
-      <main></main>
+      <main>
+        <Movies movies={movies} />
+      </main>
     </div>
   );
 }
